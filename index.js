@@ -49,7 +49,7 @@ var upload = multer({
 
 // Get Form
 app.get("/", function (req, res) {
-  res.render("form");
+  res.render("form", { data: "" });
 });
 
 // Upload Image
@@ -66,11 +66,11 @@ app.post("/upload", upload.any(), function (req, res, next) {
     if (err) {
       console.log(err);
     } else {
-      console.log("Saved", result);
+      // console.log("Saved", result);
+      res.status(200);
+      res.render("form", { data: result._id });
     }
   });
-  res.status(200);
-  res.redirect("/");
 });
 
 //Get Image

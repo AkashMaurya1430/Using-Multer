@@ -13,6 +13,13 @@
   </head>
   <body>
     <div class="container mt-5">
+      <% if(data){ %>
+      <div class="alert alert-success mb-2" role="alert">
+        Click
+        <a href="/image/<%= data %>">Here</a>
+        to view Image
+      </div>
+      <% } %>
       <h2 class="mb-4">Upload File</h2>
       <form action="/upload" method="POST" enctype="multipart/form-data">
         <div class="form-group">
