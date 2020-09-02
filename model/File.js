@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const imageSchema = mongoose.Schema(
+const imageSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -18,6 +18,11 @@ const imageSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    img: {
+      data: Buffer,
+      contentType: String,
+      // required: true,
     },
   },
   { timestamps: true }

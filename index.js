@@ -34,18 +34,18 @@ app.use(bodyParser.json());
 // app.use("/uploads", express.static(path.join(__dirname + "uploads")));
 
 // Multer Save File Setup
-var storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
+// var storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "uploads/");
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname);
+//   },
+// });
 
-var upload = multer({
-  storage: storage,
-});
+// var upload = multer({
+//   storage: storage,
+// });
 
 // Get Form
 app.get("/", function (req, res) {
@@ -53,20 +53,21 @@ app.get("/", function (req, res) {
 });
 
 // Upload Image
-app.post("/upload", upload.any(), function (req, res, next) {
-  // console.log(req.files[0]);
+app.post("/upload", upload.single("myimage"), function (req, res, next) {
+  // console.log(req.file);
   const newImage = new Image({
     name: req.body.name,
-    size: req.files[0].size,
-    mimetype: req.files[0].mimetype,
-    path: req.files[0].path,
+    size: req.file.size,
+    mimetype: req.file.mimetype,
+    path: req.file.path,
   });
-
+  newImage.img.data = fs.readFileSync(req.file.path);
+  newImage.img.contentType = req.file.mimetype;
   newImage.save((err, result) => {
     if (err) {
       console.log(err);
     } else {
-      // console.log("Saved", result);
+      console.log("Saved", result);
       res.status(200);
       res.render("form", { data: result._id });
     }
@@ -77,8 +78,8 @@ app.post("/upload", upload.any(), function (req, res, next) {
 app.get("/image/:slug", function (req, res) {
   var filename = req.params.slug;
   Image.findOne({ _id: filename }).then((image) => {
-    const dest = path.join(__dirname + "\\") + image.path;
-    res.sendFile(dest);
+    res.contentType(image.img.contentType);
+    res.send(image.img.data);
   });
 });
 
